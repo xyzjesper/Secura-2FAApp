@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "run:android": "export JAVA_HOME=/opt/android-studio/jbr && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android dev --open --host",
+    "build:android": "export JAVA_HOME=$(readlink -f /usr/bin/java | sed \"s:bin/java::\") && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android build --apk"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -29,7 +29,6 @@ function App() {
                 </a>
             </div>
             <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
             <form
                 className="row"
                 onSubmit={(e) => {

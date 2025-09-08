@@ -13,6 +13,7 @@ val tauriProperties = Properties().apply {
     }
 }
 
+
 android {
     compileSdk = 36
     namespace = "dev.xyzjesper.fa_app"
