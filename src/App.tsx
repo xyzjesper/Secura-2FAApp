@@ -12,7 +12,7 @@ export default function AuthenticatorApp() {
     useEffect(() => {
         async function fetch() {
             const data = await getAccounts() as any[]
-            setAccounts(data.map((d) => {
+            setAccounts(data && data.map((d) => {
                 return {
                     Id: d.Id,
                     Name: d.Name,
@@ -36,7 +36,7 @@ export default function AuthenticatorApp() {
             Error: {error}
             <div classame="w-full max-w-md flex flex-col gap-4">
                 <div className="w-full max-w-md flex flex-col gap-4">
-                    {accounts.map((a) => {
+                    {accounts && accounts.map((a) => {
                         return (<div>
                             <p>{a.Name}</p>
                             <p>{a.Icon}</p>
