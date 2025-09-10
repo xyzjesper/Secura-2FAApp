@@ -21,6 +21,11 @@
       "csp": null
     }
   },
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:SecuraDB4.db"]
+    }
+  },
   "bundle": {
     "active": true,
     "targets": "all",

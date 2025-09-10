@@ -9,13 +9,20 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "run:android": "export JAVA_HOME=/opt/android-studio/jbr && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android dev --open --host",
+    "run:desktop": "export WEBKIT_DISABLE_DMABUF_RENDERER=1 && bun tauri dev",
     "build:android": "export JAVA_HOME=$(readlink -f /usr/bin/java | sed \"s:bin/java::\") && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android build --apk"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-barcode-scanner": "~2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-sql": "~2",
+    "framer-motion": "^12.23.12",
+    "lucide-react": "^0.543.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-opener": "^2"
+    "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",
