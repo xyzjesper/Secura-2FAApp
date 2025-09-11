@@ -1,12 +1,13 @@
 export type ToTpCreationCallback = {
-    success: boolean;
-    message: string;
-    token?: string;
-}
+  success: boolean;
+  message: string;
+  token?: number;
+};
 
-export type ToTpAccounts = {
-    Id: number;
-    Name: string;
-    Icon?: string;
-    OtpAuthUrl: string;
-}
+export type ToTpAccount = {
+  Id: number;
+  Name: string;
+  Code?: number;
+  Icon?: string;
+  OtpAuthUrl: string;
+};
