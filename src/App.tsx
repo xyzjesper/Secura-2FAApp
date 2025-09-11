@@ -62,7 +62,7 @@ export default function AuthenticatorApp() {
   function handleMouseDown(account: ToTpAccount) {
     timerRef.current = setTimeout(() => {
       setOpenToTpModal(account);
-    }, 1000);
+    }, 2000);
   }
 
   const handleMouseUp = () => {

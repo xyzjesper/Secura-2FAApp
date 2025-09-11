@@ -29,7 +29,7 @@ export async function addAccount(): Promise<ToTpAccount[]> {
     }
 
     const result = await scan({
-      windowed: true,
+      windowed: false,
       cameraDirection: "front",
       formats: [Format.QRCode],
     });
