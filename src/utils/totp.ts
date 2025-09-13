@@ -1,41 +1,22 @@
 "use client";
-import {
-  checkPermissions,
-  Format,
-  requestPermissions,
-  scan,
-} from "@tauri-apps/plugin-barcode-scanner";
 import { invoke } from "@tauri-apps/api/core";
 import { ToTpAccount, ToTpCreationCallback } from "../types/totp.ts";
 import { initDatabaseData, getDatabaseData } from "./database.ts";
 
-export async function getAccounts() {
+export async function getAccounts(): Promise<ToTpAccount[]> {
   try {
     const data = await getDatabaseData("SELECT * FROM accounts;");
-    return data as any;
+    return data as ToTpAccount[];
   } catch (err) {
-    return String(err);
+    return [];
   }
 }
 
-export async function addAccount(): Promise<ToTpAccount[]> {
+export async function addAccount(account: ToTpAccount): Promise<ToTpAccount[]> {
   try {
-    let checked = await checkPermissions();
-    if (checked !== "granted") {
-      let requested = await requestPermissions();
-      if (requested !== "granted") {
-        console.error("Camera permission not granted");
-      }
-    }
-
-    const result = await scan({
-      windowed: false,
-      cameraDirection: "front",
-      formats: [Format.QRCode],
-    });
     try {
-      (await invoke("make_totp_qrcode", {
-        oauth: result.content,
+      (await invoke("make_totp", {
+        oauth: account.OtpAuthUrl,
       })) as ToTpCreationCallback;
     } catch (e) {
       return [];
@@ -43,7 +24,13 @@ export async function addAccount(): Promise<ToTpAccount[]> {
 
     await initDatabaseData(
       "INSERT INTO accounts (Name, Icon, OtpAuthUrl) VALUES ($1, $2, $3)",
-      ["Discord", "", result.content]
+      [
+        account.Name.length >= 2 ? account.Name : `NoName`,
+        (account.Icon as string)?.length >= 2
+          ? account.Icon
+          : "material-symbols-light:fingerprint",
+        account.OtpAuthUrl,
+      ]
     );
 
     const data = await getAccounts();
@@ -57,7 +44,7 @@ export async function generateToTp(
   toTpUrl: string
 ): Promise<ToTpCreationCallback> {
   try {
-    return (await invoke("make_totp_qrcode", {
+    return (await invoke("make_totp", {
       oauth: toTpUrl,
     })) as ToTpCreationCallback;
   } catch (e) {

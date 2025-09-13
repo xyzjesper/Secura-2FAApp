@@ -10,6 +10,7 @@
     "opener:default",
     "sql:default",
     "sql:allow-execute",
+    "os:default",
     "barcode-scanner:default"
   ]
 }

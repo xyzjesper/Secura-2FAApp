@@ -1,8 +1,9 @@
-import { Check, X } from "lucide-react";
+import { Check, X, AlertTriangle } from "lucide-react";
 import { ToTpAccount } from "../../types/totp";
 import { useState } from "react";
 import { deleteToTp } from "../../utils/totp";
 import { stringToIcon } from "@iconify/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function ToTpDelete({
   toTpAccount,
@@ -13,32 +14,43 @@ export function ToTpDelete({
   isOpen: (bool: boolean) => void;
   isDeleted: (bool: boolean) => void;
 }) {
-  const [successDisplay, setSuccessDisplay] = useState<string>(
-    "Awating Deletion..."
-  );
+  const [statusMsg, setStatusMsg] = useState<string>("Awaiting deletion...");
 
   const handleDelete = async () => {
     const req = await deleteToTp(toTpAccount.Id);
     if (req) {
       isDeleted(true);
-      setSuccessDisplay("Successfully Deleted your account.");
+      setStatusMsg("Successfully deleted your account.");
     } else {
-      setSuccessDisplay("An Error occurred while deletion!");
+      setStatusMsg("An error occurred while deletion!");
     }
     setTimeout(() => {
       isOpen(false);
-    }, 1000);
+    }, 1200);
   };
 
   return (
-    <>
-      <div className="fixed inset-0 flex justify-center items-center bg-black/40 backdrop-blur-sm z-2">
-        <div className="w-72 bg-zinc-800/90 border-2 border-zinc-500 rounded-2xl shadow-xl pointer-events-auto flex flex-col items-center p-6 gap-4">
-          <div className="w-12 h-12 bg-zinc-700 rounded-full flex justify-center items-center text-white text-xl font-bold">
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50"
+        onClick={() => isOpen(false)}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-96 bg-zinc-900/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5"
+        >
+          <div className="w-16 h-16 bg-zinc-800 rounded-full flex justify-center items-center shadow-md">
             <img
               width={40}
               height={40}
-              className="w-[40px] h-[40px]"
+              className="w-10 h-10"
               src={`https://api.iconify.design/${
                 stringToIcon(toTpAccount?.Icon ?? "ic:baseline-fingerprint")
                   ?.prefix
@@ -49,33 +61,38 @@ export function ToTpDelete({
             />
           </div>
 
-          <h2 className="text-xl font-semibold text-white text-center">
-            {toTpAccount?.Name ?? "Unbekannt"}
+          <h2 className="text-lg font-semibold text-white text-center">
+            Delete {toTpAccount?.Name ?? "Unbekannt"}?
           </h2>
 
-          <div className="flex flex-col items-center gap-1 bg-zinc-700/60 rounded-md p-3 w-full">
-            <div>
-              <p className="items-center justify-center flex">
-                Confirm the deletion of: {toTpAccount.Name}
-              </p>
-              <hr className="justify-center items-center flex rounded-b-full mt-5 mb-3"></hr>
-              <div className="justify-center items-center flex text-stone-500 font-bold text-xs">
-                <p>{successDisplay}</p>
-              </div>
-              <div className="flex items-center justify-center">
-                <Check className="size-15" onClick={handleDelete}></Check>{" "}
-                <X
-                  className="size-15"
-                  onClick={() => {
-                    isOpen(false);
-                    isDeleted(false);
-                  }}
-                ></X>
-              </div>
-            </div>
+          <div className="flex items-center gap-2 text-red-400 font-medium">
+            <AlertTriangle className="w-5 h-5" />
+            <p> This action cannot be undone! </p>
           </div>
-        </div>
-      </div>
-    </>
+
+          <p className="text-sm text-zinc-400 text-center">{statusMsg}</p>
+
+          <div className="flex gap-6 mt-2">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="p-3 rounded-full bg-green-600 hover:bg-green-700 transition shadow-md"
+            >
+              <Check className="text-white w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                isOpen(false);
+                isDeleted(false);
+              }}
+              className="p-3 rounded-full bg-red-600 hover:bg-red-700 transition shadow-md"
+            >
+              <X className="text-white w-5 h-5" />
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

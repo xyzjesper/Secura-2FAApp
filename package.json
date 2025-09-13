@@ -1,7 +1,7 @@
 {
-  "name": "fa-app",
+  "name": "secura",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,21 +9,28 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "run:android": "export JAVA_HOME=/opt/android-studio/jbr && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android dev --open --host",
-    "run:desktop": "export WEBKIT_DISABLE_DMABUF_RENDERER=1 && bun tauri dev",
-    "build:android": "export JAVA_HOME=$(readlink -f /usr/bin/java | sed \"s:bin/java::\") && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android build --apk"
+    "run:desktop": "export RUST_BACKTRACE=1 && export WEBKIT_DISABLE_DMABUF_RENDERER=1 && bun tauri dev",
+    "build:androidAPK": "export JAVA_HOME=/home/xyzjesper/.jdks/ms-21.0.8 && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android build --apk",
+    "build:androidAAB": "export JAVA_HOME=/home/xyzjesper/.jdks/ms-21.0.8 && export ANDROID_HOME=\"$HOME/Android/Sdk\" && export NDK_HOME=\"$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)\" && bun tauri android build --aab"
   },
   "dependencies": {
+    "@iconify/react": "^6.0.1",
     "@iconify/tools": "^4.1.2",
     "@iconify/utils": "^3.0.1",
     "@tailwindcss/vite": "^4.1.13",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-barcode-scanner": "~2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-os": "^2.3.1",
     "@tauri-apps/plugin-sql": "~2",
+    "buffer": "^6.0.3",
     "framer-motion": "^12.23.12",
+    "install": "^0.13.0",
     "lucide-react": "^0.543.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-toastify": "^11.0.5",
+    "react-webcam": "^7.2.0",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {

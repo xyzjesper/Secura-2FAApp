@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
@@ -13,19 +14,49 @@ val tauriProperties = Properties().apply {
     }
 }
 
-
 android {
+
+  kotlinOptions {
+    jvmTarget = "21"
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+  }
+
+
+  namespace = "dev.xyzjesper.fa_app"
     compileSdk = 36
-    namespace = "dev.xyzjesper.fa_app"
     defaultConfig {
-        manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "dev.xyzjesper.fa_app"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
-        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
+      manifestPlaceholders["usesCleartextTraffic"] = "false"
+      applicationId = "dev.xyzjesper.fa_app"
+      minSdk = 24
+      targetSdk = 34
+      versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
+      versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
     }
+  
+
+signingConfigs {
+    create("release") {
+        val keystorePropertiesFile = rootProject.file("keystore.properties")
+        val keystoreProperties = Properties()
+        if (keystorePropertiesFile.exists()) {
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+        }
+
+        keyAlias = keystoreProperties["keyAlias"] as String
+        keyPassword = keystoreProperties["password"] as String
+        storeFile = file(keystoreProperties["storeFile"] as String)
+        storePassword = keystoreProperties["password"] as String
+    }
+}
+
     buildTypes {
+        getByName("release") {
+        signingConfig = signingConfigs.getByName("release")
+    }
         getByName("debug") {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
             isDebuggable = true
@@ -46,10 +77,7 @@ android {
             )
         }
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    buildFeatures {
+  buildFeatures {
         buildConfig = true
     }
 }
