@@ -26,28 +26,33 @@ export function ToTpCreate({
   );
 
   const handleCreate = async () => {
-    setStatusMessage("⏳ Creating account...");
+    setStatusMessage("Creating account...");
     try {
       const data = await addAccount(account);
-      const totpAccounts = await Promise.all(
-        data.map(async (d) => {
-          const code = await generateToTp(d.OtpAuthUrl);
-          return {
-            Id: d.Id,
-            Name: d.Name,
-            Code: code.success ? code.token : 0,
-            Icon: d.Icon ?? null,
-            OtpAuthUrl: d.OtpAuthUrl,
-          };
-        })
-      );
 
-      accountsCallback(totpAccounts as ToTpAccount[]);
-      setStatusMessage("Account created successfully!");
+      if (typeof data == "string") {
+        setStatusMessage(data);
+      } else {
+        const totpAccounts = await Promise.all(
+          data.map(async (d) => {
+            const code = await generateToTp(d.OtpAuthUrl);
+            return {
+              Id: d.Id,
+              Name: d.Name,
+              Code: code.success ? code.token : 0,
+              Icon: d.Icon ?? null,
+              OtpAuthUrl: d.OtpAuthUrl,
+            };
+          })
+        );
 
-      setTimeout(() => {
-        isOpen(false);
-      }, 1200);
+        accountsCallback(totpAccounts as ToTpAccount[]);
+        setStatusMessage("Account created successfully!");
+
+        setTimeout(() => {
+          isOpen(false);
+        }, 1200);
+      }
     } catch (err) {
       console.error(err);
       setStatusMessage("Failed to create account.");
@@ -62,11 +67,7 @@ export function ToTpCreate({
         : type === 2
         ? { Icon: text }
         : {
-            OtpAuthUrl: text.startsWith("otpauth://")
-              ? text
-              : `otpauth://totp/Secura:secura@xy-z.org?secret=${text
-                  .toUpperCase()
-                  .replace(/ /g, "")}&issuer=Secura`,
+            OtpAuthUrl: text,
           }),
     }));
   };

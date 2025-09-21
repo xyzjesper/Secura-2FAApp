@@ -25,3 +25,6 @@ dist-ssr
 
 # Custom 
 /src-tauri/gen/android/keystore.properties
+/squashfs-root
+/nsis-3.08
+nsis-3.zip

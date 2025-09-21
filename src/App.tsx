@@ -26,6 +26,7 @@ export default function AuthenticatorApp() {
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [openToTpModal, setOpenToTpModal] = useState<ToTpAccount | null>(null);
   const [openCreateToTpModal, setOpenCreateToTpModal] = useState(false);
+  const [error, setError] = useState<string | null>();
   const timerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -44,23 +45,29 @@ export default function AuthenticatorApp() {
   }
 
   async function get() {
-    const data = (await getAccounts()) as ToTpAccount[];
-    const totTpAccounts = await Promise.all(
-      data.map(async (d) => {
-        const code = await generateToTp(d.OtpAuthUrl);
-        return {
-          Id: d.Id,
-          Name: d.Name,
-          Code: code.success ? code.token : 0,
-          NextCode: code.nextToken,
-          Icon: d.Icon ?? null,
-          OtpAuthUrl: d.OtpAuthUrl,
-        };
-      }) as unknown as ToTpAccount[]
-    );
+    const data = await getAccounts();
 
-    setLoading(false);
-    setAccounts(totTpAccounts);
+    if (typeof data == "string") {
+      setError(data);
+      setLoading(false);
+    } else {
+      const totTpAccounts = await Promise.all(
+        data.map(async (d) => {
+          const code = await generateToTp(d.OtpAuthUrl);
+          return {
+            Id: d.Id,
+            Name: d.Name,
+            Code: code.success ? code.token : 0,
+            NextCode: code.nextToken,
+            Icon: d.Icon ?? null,
+            OtpAuthUrl: d.OtpAuthUrl,
+          };
+        }) as unknown as ToTpAccount[]
+      );
+
+      setLoading(false);
+      setAccounts(totTpAccounts);
+    }
   }
 
   function handleMouseDown(account: ToTpAccount) {
@@ -213,6 +220,8 @@ export default function AuthenticatorApp() {
             <>No Accounts found!</>
           )}
         </div>
+
+        {error}
 
         <div className="fixed bottom-0 w-full bg-zinc-900/90 border-t border-zinc-700 py-4 flex justify-center gap-6 shadow-2xl">
           <button
