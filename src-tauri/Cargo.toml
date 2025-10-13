@@ -29,3 +29,4 @@ tauri-plugin-fs = "2"
 base64 = "0.22.1"
 aes-gcm = "0.10.3"
 tauri-plugin-dialog = "2"
+serde = { version = "1.0.219", features = ["derive"] }

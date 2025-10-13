@@ -3680,6 +3680,7 @@ version = "0.1.3"
 dependencies = [
  "aes-gcm",
  "base64 0.22.1",
+ "serde",
  "serde_json",
  "tauri",
  "tauri-build",

@@ -3,7 +3,9 @@ use aes_gcm::{
     Aes256Gcm, Nonce,
 };
 use base64::prelude::*;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::error::Error;
 use std::string::String;
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::AppHandle;
@@ -11,10 +13,27 @@ use tauri_plugin_fs::FsExt;
 use tauri_plugin_sql::{Migration, MigrationKind};
 use totp_rs::TOTP;
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenResponse<'a> {
+    pub success: bool,
+    pub token: String,
+    pub nextToken: String,
+    pub message: &'a str,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenError<'a> {
+    pub status: bool,
+    pub message: &'a str,
+}
+
 #[tauri::command]
-fn make_totp(oauth: &str) -> Value {
+fn make_totp(oauth: &str) -> Result<TokenResponse, TokenError> {
     let totp = TOTP::from_url(oauth).unwrap();
-    let token = totp.generate_current().unwrap();
+    let token = totp.generate_current().map_err(|e| TokenError {
+        status: false,
+        message: "Failed to generate token",
+    });
 
     let start = SystemTime::now();
     let since_the_epoch = start
@@ -24,14 +43,12 @@ fn make_totp(oauth: &str) -> Value {
 
     let next_token = totp.generate(seconds);
 
-    return json!(
-        {
-            "success": true,
-            "token": token.to_string(),
-            "nextToken": next_token.to_string(),
-            "message": "Created successfully"
-        }
-    );
+    return Ok(TokenResponse {
+        success: true,
+        token: token?.to_string(),
+        nextToken: next_token.to_string(),
+        message: "Created successfully",
+    });
 }
 
 #[tauri::command]
