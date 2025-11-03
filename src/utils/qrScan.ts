@@ -6,7 +6,7 @@ import {
   requestPermissions,
   scan,
 } from "@tauri-apps/plugin-barcode-scanner";
-import { ToTpQRCodeCalback } from "../types/totp";
+import { ToTpQRCodeCalback } from "../types/callbacks/qrcode";
 
 export const cancelScan = async () => {
   await cancel();
@@ -31,13 +31,22 @@ export const requestScanPermissions = async () => {
   }
 };
 
-export const getToTpQRCode = async (toTpUrl: string) => {
+export const getToTpQRCode = async (
+  toTpUrl: string
+): Promise<ToTpQRCodeCalback> => {
   try {
-    const json = (await invoke("generate_totp_qr_base64", {
-      oauth: toTpUrl,
-    })) as ToTpQRCodeCalback;
-    return json.qrCodeBase64;
+    const qrCodeData = await invoke<ToTpQRCodeCalback>(
+      "generate_totp_qr_base64",
+      {
+        oauth: toTpUrl,
+      }
+    );
+
+    return qrCodeData;
   } catch (e) {
-    return String(e);
+    return {
+      success: false,
+      qrcodebase64: null,
+    };
   }
 };

@@ -1,10 +1,17 @@
 "use client";
 import { invoke } from "@tauri-apps/api/core";
-import { ToTpAccount, ToTpCreationCallback } from "../types/totp.ts";
 import { initDatabaseData, getDatabaseData } from "./database.ts";
 import { getSecretKey } from "./default.ts";
+import {
+  AddAccountCallback,
+  GetAccountCallback,
+  ToTpCreationCallback,
+  UpdateAccountCallback,
+} from "../types/callbacks/accounts.ts";
+import { ToTpAccount } from "../types/totp.ts";
+import { message } from "@tauri-apps/plugin-dialog";
 
-export async function getAccounts(): Promise<ToTpAccount[] | string> {
+export async function getAccounts(): Promise<GetAccountCallback> {
   try {
     const data = (await getDatabaseData(
       "SELECT * FROM accounts;"
@@ -29,29 +36,42 @@ export async function getAccounts(): Promise<ToTpAccount[] | string> {
       })
     )) as ToTpAccount[];
 
-    return decryptedData;
+    return {
+      success: true,
+      data: decryptedData,
+      message: "Accounts fetched successfully.",
+    };
   } catch (err) {
-    return String(err);
+    return {
+      success: false,
+      data: [],
+      message: `Error fetching accounts: ${String(err)}`,
+    };
   }
 }
 
 export async function addAccount(
   account: ToTpAccount
-): Promise<ToTpAccount[] | string> {
+): Promise<AddAccountCallback> {
   try {
     if (!account.OtpAuthUrl) {
-      return "No Secret to generate!";
+      return {
+        success: false,
+        data: [],
+        message: "Secret Key is required!",
+        created: null,
+      };
     }
     const key = await getSecretKey();
 
     const parsedUrl = account.OtpAuthUrl.startsWith("otpauth://")
       ? account.OtpAuthUrl
-      : `otpauth://totp/${account.Name ? account.Name : "Secura"}:${
-          account.Name ? account.Name.toLowerCase() : "Secura"
-        }@xy-z.org?secret=${account.OtpAuthUrl.toUpperCase().replace(
+      : `otpauth://totp/Secura:Secura@xy-z.org?secret=${account.OtpAuthUrl.toUpperCase().replace(
           / /g,
           ""
         )}&issuer=Secura`;
+
+    console.log(parsedUrl);
 
     // Check if valid secret!
     try {
@@ -59,7 +79,12 @@ export async function addAccount(
         oauth: parsedUrl,
       })) as ToTpCreationCallback;
     } catch (e) {
-      return "Please use a valid Secret!";
+      return {
+        success: false,
+        data: [],
+        message: "Invalid Secret Key!",
+        created: null,
+      };
     }
 
     const bluredUrl = await invoke("blur_password", {
@@ -79,9 +104,19 @@ export async function addAccount(
     );
 
     const data = await getAccounts();
-    return data;
+    return {
+      success: true,
+      data: data.data,
+      message: "Account added successfully.",
+      created: account,
+    };
   } catch (e) {
-    return String(e);
+    return {
+      success: false,
+      message: `Error adding account: ${(e as Error).message}`,
+      data: [],
+      created: null,
+    };
   }
 }
 
@@ -113,9 +148,13 @@ export async function upateToTp(
   totpAccountId: number,
   name?: string,
   icon?: string
-): Promise<boolean | string> {
+): Promise<UpdateAccountCallback> {
   try {
-    if (!name && !icon) return false;
+    if (!name && !icon)
+      return {
+        success: false,
+        message: "Fill all required fields.",
+      };
 
     if (name) {
       await initDatabaseData(
@@ -127,8 +166,14 @@ export async function upateToTp(
         `UPDATE accounts SET Icon='${icon}' WHERE Id='${totpAccountId}'`
       );
     }
-    return true;
+    return {
+      success: true,
+      message: "Account updated successfully.",
+    };
   } catch (e) {
-    return String(e);
+    return {
+      success: false,
+      message: `Error updating account: ${(e as Error).message}`,
+    };
   }
 }

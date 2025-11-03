@@ -3,6 +3,7 @@ import { AppData } from "../../types/default";
 import { importApp } from "../../utils/default";
 import { toast } from "react-toastify";
 import { open } from "@tauri-apps/plugin-dialog";
+import { useState } from "react";
 
 export function ImportModal({
   isOpen,
@@ -12,24 +13,23 @@ export function ImportModal({
   onClsoe: () => void;
 }) {
   if (!isOpen) return;
-  // const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File>();
 
   const handleFileImport = async () => {
-    const fileData = await open({
-      multiple: false,
-      directory: false,
-      title: "Choose a Secura TXT File",
-    });
-
-    const json = JSON.parse(fileData as string) as AppData;
-
+    console.log(file);
+    const str = new TextDecoder("utf-8");
+    const arrayBuffer = await file?.arrayBuffer();
+    if (!arrayBuffer) return;
+    const base64String = str.decode(arrayBuffer);
+    const string = atob(base64String);
+    const json = JSON.parse(string) as AppData;
     const callback = await importApp(json);
 
-    if (callback == 0)
+    if (callback.code == 500 || callback.code == 404)
       return toast("Error occoured while importing the accounts", {
         type: "error",
       });
-    else if (callback == 1) {
+    else if (callback.code == 200) {
       onClsoe();
 
       toast("Successfully added all Accounts", { type: "success" });
@@ -42,8 +42,8 @@ export function ImportModal({
       <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-100">
         <div className="w-72 bg-zinc-900/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5">
           <div>
-            {/* <div className="flex justify-center items-center border-2 p-2 rounded-2xl cursor-pointer">
-              <label form="fileimport" className="text-xs cursor-pointer">
+            <div className="flex justify-center items-center border-2 p-2 rounded-2xl cursor-pointer">
+              <label htmlFor="fileimport" className="text-xs cursor-pointer">
                 {file ? file.name : "Click here to import a Secura txt file"}
               </label>
               <input
@@ -59,7 +59,7 @@ export function ImportModal({
                 type="file"
                 className="w-full h-12 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div> */}
+            </div>
             <button
               onClick={() => {
                 handleFileImport();

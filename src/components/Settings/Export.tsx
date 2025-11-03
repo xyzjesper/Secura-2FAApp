@@ -16,7 +16,7 @@ export function ExportModal({
   const handleExport = async () => {
     const toTpAccounts = await getAccounts();
     const exportData: AppData = {
-      accounts: toTpAccounts,
+      accounts: toTpAccounts.data,
       version: await appVersion(),
     };
     const blob = new Blob([btoa(JSON.stringify(exportData))], {

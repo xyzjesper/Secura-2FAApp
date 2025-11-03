@@ -9,22 +9,33 @@ import {
   readTextFile,
   writeTextFile,
 } from "@tauri-apps/plugin-fs";
+import { ErrorCodeCallback } from "../types/callbacks/default";
 
-export async function appVersion() {
+export async function appVersion(): Promise<string> {
   return await invoke<string>("get_app_version");
 }
 
-export async function importApp(appData: AppData) {
+export async function importApp(appData: AppData): Promise<ErrorCodeCallback> {
   try {
-    if (!appData.version) return 0;
+    if (!appData.version)
+      return {
+        code: 404,
+        message: "Invalid App Data",
+      };
 
     for (const acccount of appData.accounts) {
       await addAccount(acccount);
     }
 
-    return 1;
+    return {
+      code: 200,
+      message: "Import Successful",
+    };
   } catch (e) {
-    return String(e);
+    return {
+      code: 500,
+      message: "Import Failed",
+    };
   }
 }
 

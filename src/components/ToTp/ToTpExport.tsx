@@ -20,7 +20,8 @@ export function ToTpExport({
   const getQrCodeBase64 = async () => {
     if (showQRCode != null) {
       return setShowQRCode(undefined);
-    } else setShowQRCode(await getToTpQRCode(toTpAccount.OtpAuthUrl));
+    } else
+      setShowQRCode((await getToTpQRCode(toTpAccount.OtpAuthUrl)).qrcodebase64 ?? "");
   };
 
   return (
