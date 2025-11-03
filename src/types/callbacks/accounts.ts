@@ -10,7 +10,7 @@ export type ToTpCreationCallback = {
   success: boolean;
   message: string;
   token?: number;
-  nextToken?: number;
+  nexttoken?: number;
 };
 
 export type AddAccountCallback = {
