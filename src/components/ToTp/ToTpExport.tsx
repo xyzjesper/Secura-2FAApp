@@ -21,19 +21,21 @@ export function ToTpExport({
     if (showQRCode != null) {
       return setShowQRCode(undefined);
     } else
-      setShowQRCode((await getToTpQRCode(toTpAccount.OtpAuthUrl)).qrcodebase64 ?? "");
+      setShowQRCode(
+        (await getToTpQRCode(toTpAccount.OtpAuthUrl)).qrcodebase64 ?? ""
+      );
   };
 
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-60">
-          <div className="w-96 bg-zinc-900/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5">
+        <div className="fixed inset-0 flex justify-center items-center bg-background/50 backdrop-blur-sm z-60">
+          <div className="w-96 bg-background/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5">
             <button
               onClick={() => {
                 getQrCodeBase64();
               }}
-              className="fixed mr-72 p-1 rounded-full hover:bg-zinc-800 transition inline-flex"
+              className="fixed mr-72 p-1 rounded-full hover:bg-zinc-800 transition inline-flex cursor-pointer"
             >
               <ScanQrCode className="text-zinc-400 hover:text-white" />
             </button>
@@ -41,7 +43,7 @@ export function ToTpExport({
               onClick={() => {
                 onClose();
               }}
-              className="fixed ml-72 p-1 rounded-full hover:bg-zinc-800 transition inline-flex"
+              className="fixed ml-72 p-1 rounded-full hover:bg-zinc-800 transition inline-flex cursor-pointer"
             >
               <X className="text-zinc-400 hover:text-white" />
             </button>
@@ -73,7 +75,7 @@ export function ToTpExport({
               <div className="inline-flex justify-center items-center">
                 <input
                   type="text"
-                  className="w-full h-12 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-12 rounded-lg border border-zinc-700 bg-chart-4/50 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={toTpAccount.Name}
                 />
               </div>
@@ -81,7 +83,7 @@ export function ToTpExport({
                 {" "}
                 <input
                   type="text"
-                  className="mr-2 blur-xs w-full h-12 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mr-2 blur-xs w-full h-12 rounded-lg border border-zinc-700 bg-chart-4/50 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={
                     toTpAccount.OtpAuthUrl.split("?secret=")[1].split("&")[0]
                   }
@@ -93,7 +95,7 @@ export function ToTpExport({
                     );
                     toast("Copied to Clipboard");
                   }}
-                  className="border-2 p-2 rounded-2xl"
+                  className="border-2 p-2 rounded-2xl cursor-pointer"
                 >
                   <Copy className="size-4"></Copy>
                 </div>

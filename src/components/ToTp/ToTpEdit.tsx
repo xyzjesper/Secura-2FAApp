@@ -56,7 +56,7 @@ export function ToTpUpdate({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50"
+        className="fixed inset-0 flex justify-center items-center bg-background/50 backdrop-blur-sm z-50"
         onClick={() => isOpen(false)}
       >
         <motion.div
@@ -65,9 +65,9 @@ export function ToTpUpdate({
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           onClick={(e) => e.stopPropagation()}
-          className="w-96 bg-zinc-900/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5"
+          className="relative w-82 bg-background/90 border border-zinc-700 rounded-2xl shadow-2xl p-6 flex flex-col items-center gap-5"
         >
-          <div className="w-16 h-16 bg-zinc-800 rounded-full flex justify-center items-center shadow-md">
+          <div className="w-16 h-16 rounded-full bg-zinc-800 flex justify-center items-center shadow-md">
             <img
               width={40}
               height={40}
@@ -89,13 +89,13 @@ export function ToTpUpdate({
           <form className="flex flex-col items-center gap-4 w-full">
             <input
               type="text"
-              className="w-full h-12 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-12 rounded-lg border border-zinc-700 bg-chart-4 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder={toTpAccount.Name}
               onChange={(e) => handleValueChange(e.target.value, 1)}
             />
             <input
               list="icons"
-              className="w-full h-12 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full h-12 rounded-lg border border-zinc-700 bg-chart-4 px-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Icon search..."
               onChange={(e) => {
                 handleValueChange(e.target.value, 2);
@@ -117,7 +117,7 @@ export function ToTpUpdate({
               <button
                 type="button"
                 onClick={handleUpdate}
-                className="p-3 rounded-full bg-green-600 hover:bg-green-700 transition shadow-md"
+                className="p-3 rounded-full bg-green-600 hover:bg-green-700 transition shadow-md cursor-pointer"
               >
                 <Check className="text-white w-5 h-5" />
               </button>
@@ -127,7 +127,7 @@ export function ToTpUpdate({
                   isOpen(false);
                   isUpdated(false);
                 }}
-                className="p-3 rounded-full bg-red-600 hover:bg-red-700 transition shadow-md"
+                className="p-3 rounded-full bg-red-600 hover:bg-red-700 transition shadow-md cursor-pointer"
               >
                 <X className="text-white w-5 h-5" />
               </button>
