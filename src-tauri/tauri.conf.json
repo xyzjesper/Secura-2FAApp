@@ -29,6 +29,14 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "linux": {
+      "appimage": {
+        "files": {
+          "/usr/share/README.md": "../README.md",
+          "/usr/assets": "../assets/" 
+        }
+      }
+    },
     "android": {
       "versionCode": 102
     },
