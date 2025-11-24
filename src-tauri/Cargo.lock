@@ -3772,6 +3772,7 @@ dependencies = [
  "aes-gcm",
  "base64 0.22.1",
  "clang",
+ "clang-sys",
  "serde",
  "serde_json",
  "simple_crypt",
